@@ -9,4 +9,9 @@ class Category extends Model
 {
     use HasFactory;
     protected $fillable = ['name', 'description', 'is_active'];
+
+    public function categoryNumber()
+    {
+        return $this->hasOne(CategoryNumber::class);
+    }
 }

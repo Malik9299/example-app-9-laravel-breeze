@@ -17,7 +17,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        // $categories = Category::all();
+        $categories = Category::with('categoryNumber')->get();
 
         foreach ($categories as $key => $category) {
             if (isset($category->description)) {
@@ -56,7 +57,8 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        $category->load('categoryNumber');
+        return view('categories.view', compact('category'));
     }
 
     /**
