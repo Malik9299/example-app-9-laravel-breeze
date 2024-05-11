@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Edit Categories') }}
+            {{ __('View Categories') }}
         </h2>
     </x-slot>
 
@@ -38,7 +38,21 @@
                         <div class="mt-4">
                             <x-input-label for="status" :value="__('Category Number')" />
 
-                            <x-text-input id="status" class="block mt-1 w-full" type="text" name="status" :value="$category->categoryNumber->category_number" required autocomplete="status" />
+                            <x-text-input id="status" class="block mt-1 w-full" type="text" name="status" :value="optional($category->categoryNumber)->category_number" required autocomplete="status" />
+
+
+                            <x-input-error :messages="$errors->get('status')" class="mt-2" />
+                        </div>
+
+                        <div class="mt-4">
+                            <x-input-label for="status" :value="__('Sub Categories')" />
+
+                            @foreach ($category->subCategory as $subCategory)
+
+                            <x-text-input id="status" class="block mt-1 w-full" type="text" name="status" :value="$subCategory->name" required autocomplete="status" />
+
+                            @endforeach
+
 
                             <x-input-error :messages="$errors->get('status')" class="mt-2" />
                         </div>

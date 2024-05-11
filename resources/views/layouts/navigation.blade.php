@@ -19,6 +19,10 @@
                         {{ __('Categories') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('subCategories.index')" :active="request()->routeIs('sub_categories')">
+                        {{ __('Sub Categories') }}
+                    </x-nav-link>
+
                 </div>
             </div>
 

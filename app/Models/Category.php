@@ -14,4 +14,10 @@ class Category extends Model
     {
         return $this->hasOne(CategoryNumber::class);
     }
+    public function subCategory()
+    {
+        return $this->hasMany(SubCategory::class);
+
+        // return $this->hasMany(SubCategory::class, 'category_column_id', 'id');
+    }
 }
