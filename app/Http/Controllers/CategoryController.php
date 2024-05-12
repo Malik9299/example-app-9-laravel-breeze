@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\CategoryNumber;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -17,12 +18,16 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if (!$request->perPage) {
+            $request->request->add(['perPage' => 10]);
+        }
         // $categories = Category::all();
         // DB::enableQueryLog();
 
-        $categories = Category::with('categoryNumber')->orderBy('id', 'desc')->get();
+        $categories = Category::with('categoryNumber')->orderBy('id', 'desc')->paginate($request->perPage);
+
 
         // dd(DB::getQueryLog());
 
@@ -31,7 +36,12 @@ class CategoryController extends Controller
                 $categories[$key]['description'] = Str::limit($category->description ?? '', 50);
             }
         }
-        return view('categories.index', compact('categories'));
+        if ($request->expectsJson()) {
+            return response()->json(['categories' => $categories]);
+        } else {
+            return view('categories.index', compact('categories'));
+        }
+        // return view('categories.index', compact('categories'));
     }
 
     /**
@@ -80,8 +90,15 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        $category->load('categoryNumber', 'subCategory');
-        return view('categories.view', compact('category'));
+        // return redirect()->route('not_found_route')->with('error', 'Category not found.');
+        // $category->load('categoryNumber', 'subCategory');
+        // return view('categories.view', compact('category'));
+        try {
+            $category = Category::findOrFail($category->id)->load('categoryNumber', 'subCategory');
+            return view('categories.view', compact('category'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('not_found_route')->with('error', 'Category not found.');
+        }
     }
 
     /**

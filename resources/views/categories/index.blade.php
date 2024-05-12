@@ -84,6 +84,7 @@
                             <!-- More rows here -->
                         </tbody>
                     </table>
+                    {{ $categories->links() }}
                 </div>
             </div>
         </div>

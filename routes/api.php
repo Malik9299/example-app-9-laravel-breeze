@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +23,24 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/test', function () {
     return "Everything working fine";
 });
+
+Route::group(['middleware' => ['userAuth']], function () {
+    Route::post('login', [Api\AuthController::class, 'login'])->name('login');
+});
+
+Route::middleware('auth:sanctum')->get('/categories', [CategoryController::class, 'index']);
+
+
+// Route::middleware('auth:sanctum')->group(function () {
+//     // API Resource routes for categories
+//     Route::apiResource('categories', CategoryController::class);
+
+//     // Custom route for creating a new category (POST request)
+//     // Route::post('categories', [CategoryController::class, 'store']);
+// });
+
+// Route::resource('/categories', CategoryController::class);
+
 
 
 // Route::post('laravel-validation', [Api\ValidateController::class, 'laravelValidation']);

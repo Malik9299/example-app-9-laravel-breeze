@@ -34,3 +34,7 @@ require __DIR__ . '/auth.php';
 
 Route::resource('categories', CategoryController::class);
 Route::resource('subCategories', SubCategoryController::class);
+
+// Route::get('not_found_route', function () {
+//     return view('customNotFound');
+// })->name('not_found_route');
