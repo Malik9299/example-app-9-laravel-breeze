@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\CategoryNumber;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,7 +20,11 @@ class CategoryController extends Controller
     public function index()
     {
         // $categories = Category::all();
-        $categories = Category::with('categoryNumber')->get();
+        // DB::enableQueryLog();
+
+        $categories = Category::with('categoryNumber')->orderBy('id', 'desc')->get();
+
+        // dd(DB::getQueryLog());
 
         foreach ($categories as $key => $category) {
             if (isset($category->description)) {
@@ -35,7 +41,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('categories.add');
     }
 
     /**
@@ -46,7 +52,24 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'categoryName' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $category = new Category();
+        $category->name = $request->categoryName;
+        $category->description = $request->description;
+        $category->is_active = $request->status;
+        $category->save();
+
+        $categoryNumber = new CategoryNumber();
+        $categoryNumber->category_number = $request->categoryNumber;
+        $categoryNumber->category()->associate($category); // Associate the category with categoryNumber
+        $categoryNumber->save();
+
+
+        return redirect()->route('categories.index');
     }
 
     /**
@@ -113,6 +136,11 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category = Category::find($category->id);
+        if ($category) {
+            $category->categoryNumber()->delete();
+            $category->delete();
+        }
+        return redirect()->route('categories.index');
     }
 }
